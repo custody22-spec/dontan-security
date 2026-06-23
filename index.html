@@ -494,12 +494,27 @@ function copyText(txt){
 
 /* ── 대시보드 ── */
 async function loadDash(){
-  document.getElementById('dash-content').innerHTML='<div class="loading"><div class="spinner"></div> 공정 데이터 불러오는 중...</div>';
-  try{
-    const d=await callClaude(`Notion DB ${COL_PROGRESS}에서 모든 항목 조회. 시스템명,상태,진척도(%),계획예정일,비고,시공업체 포함. JSON 배열만. 형식:[{"시스템":"","상태":"","진척도":0,"계획예정일":"","비고":"","업체":""}]`);
-    const items=parseJSON(extractText(d))||[];
-    renderDash(items);
-  }catch{document.getElementById('dash-content').innerHTML='<div style="color:var(--red);padding:20px;text-align:center">데이터 불러오기 실패. 새로고침 해보세요.</div>';}
+  const items=[
+    {시스템:'CCTV',상태:'진행중',진척도:70,업체:'SK쉴더스',비고:'7월 셋팅·보완'},
+    {시스템:'주차관제시스템',상태:'완료',진척도:100,업체:'아마노코리아',비고:''},
+    {시스템:'경관조명',상태:'진행중',진척도:80,업체:'남효A&A',비고:'추가요청분 진행'},
+    {시스템:'스피드게이트',상태:'완료',진척도:100,업체:'SK쉴더스',비고:''},
+    {시스템:'원패스시스템',상태:'완료',진척도:100,업체:'다산카이스',비고:'21EA 증가'},
+    {시스템:'키즈룸',상태:'진행중',진척도:90,업체:'알에프지',비고:'안전성검사 후 OPEN'},
+    {시스템:'커뮤니티출입통제',상태:'완료',진척도:100,업체:'SK쉴더스',비고:''},
+    {시스템:'커뮤니티 KIOSK',상태:'완료',진척도:100,업체:'트러스테이',비고:''},
+    {시스템:'입주민APP',상태:'진행중',진척도:60,업체:'트러스테이',비고:'데이터 이관 진행'},
+    {시스템:'방재실·경비초소 대형모니터',상태:'완료',진척도:100,업체:'TPM',비고:''},
+    {시스템:'근태관리시스템',상태:'완료',진척도:100,업체:'-',비고:''},
+    {시스템:'순찰관리시스템(순찰Tag)',상태:'완료',진척도:100,업체:'-',비고:''},
+    {시스템:'경비원 바디캠',상태:'완료',진척도:100,업체:'-',비고:''},
+    {시스템:'순찰용 전기자전거',상태:'완료',진척도:100,업체:'-',비고:''},
+    {시스템:'수하물 전기오토바이',상태:'완료',진척도:100,업체:'-',비고:''},
+    {시스템:'입주민구호물품',상태:'완료',진척도:100,업체:'-',비고:''},
+    {시스템:'경비초소 대형간판·로고',상태:'완료',진척도:100,업체:'-',비고:''},
+    {시스템:'경비초소 비상벨',상태:'완료',진척도:100,업체:'-',비고:''},
+  ];
+  renderDash(items);
 }
 
 function renderDash(items){
@@ -536,25 +551,32 @@ function renderDash(items){
 }
 
 /* ── 업체 ── */
-async function loadVendors(){
+function loadVendors(){
   vendorLoaded=true;
-  document.getElementById('vendor-content').innerHTML='<div class="loading"><div class="spinner"></div> 업체 불러오는 중...</div>';
-  try{
-    const d=await callClaude(`Notion DB ${COL_VENDOR}에서 모든 업체 조회. 업체명,구분,성명,연락처 포함. JSON 배열만. 형식:[{"업체명":"","구분":"","성명":"","연락처":""}]`);
-    const items=parseJSON(extractText(d))||[];
-    let h='';
-    const groups={};
-    items.forEach(v=>{const g=v.구분||'기타';if(!groups[g])groups[g]=[];groups[g].push(v);});
-    Object.entries(groups).forEach(([g,vs])=>{
-      h+=`<div class="sl">${g}</div>`;
-      vs.forEach(v=>{
-        h+=`<div class="vcard"><div><div class="vname">${v.업체명||'-'}</div><div class="vperson">${v.성명||'-'} · ${v.연락처||'-'}</div></div>
-          ${v.연락처?`<a class="vcall" href="tel:${v.연락처}">📞 전화</a>`:''}
-        </div>`;
-      });
+  const VEND=[
+    {g:'CCTV',n:'SK쉴더스',pe:'박경열 책임',ph:'010-2997-4321',note:'CCTV 기기'},
+    {g:'CCTV',n:'SK쉴더스',pe:'김환상 팀장',ph:'010-8964-3679',note:'CCTV 공사'},
+    {g:'주차시스템',n:'아마노코리아',pe:'이승호 대리',ph:'010-2828-0595',note:'기기'},
+    {g:'주차시스템',n:'SK네트웍스',pe:'연종흠 팀장',ph:'010-7930-1458',note:'공사'},
+    {g:'경관조명',n:'남효에이앤에이',pe:'박태정 차장',ph:'010-8627-7436',note:''},
+    {g:'원패스',n:'다산카이스',pe:'양종호 매니저',ph:'010-9633-3276',note:'트러스테이 연동'},
+    {g:'입주민APP',n:'트러스테이',pe:'박한림 팀장',ph:'010-8313-8256',note:'출입관리'},
+    {g:'입주민APP',n:'트러스테이',pe:'박현지 팀장',ph:'010-6788-7651',note:'노크타운 연동'},
+    {g:'스피드게이트',n:'엔에스게이트',pe:'김민관 부사장',ph:'010-2957-3619',note:''},
+    {g:'상황실',n:'TPM',pe:'김병준 대표',ph:'010-9112-5780',note:'비디오월·모니터'},
+    {g:'키즈룸',n:'알에프지',pe:'최병원 대표',ph:'010-3693-4105',note:'기구'},
+    {g:'키즈룸',n:'TPM',pe:'김병준 대표',ph:'010-91175780',note:'조명 ⚠️번호확인'},
+  ];
+  const groups={};
+  VEND.forEach(v=>{if(!groups[v.g])groups[v.g]=[];groups[v.g].push(v);});
+  let h='';
+  Object.entries(groups).forEach(([g,vs])=>{
+    h+=`<div class="sl">${g}</div>`;
+    vs.forEach(v=>{
+      h+=`<div class="vcard"><div><div class="vname">${v.n}</div><div class="vperson">${v.pe} · ${v.ph}</div>${v.note?`<div style="font-size:10px;color:var(--muted);margin-top:1px">${v.note}</div>`:''}</div><a class="vcall" href="tel:${v.ph}">📞 전화</a></div>`;
     });
-    document.getElementById('vendor-content').innerHTML=h||'<div style="color:var(--muted);padding:20px;text-align:center">업체 데이터 없음</div>';
-  }catch{document.getElementById('vendor-content').innerHTML='<div style="color:var(--red);padding:20px;text-align:center">불러오기 실패</div>';}
+  });
+  document.getElementById('vendor-content').innerHTML=h;
 }
 
 /* ── 입력 저장 ── */
