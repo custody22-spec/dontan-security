@@ -6,7 +6,7 @@
 <title>통합경비시스템 구축현황</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#f4f6fa;--surface:#fff;--surface2:#f0f2f7;--accent:#4f8ef7;--navy:#1a4a8a;--green:#3ecf8e;--orange:#f7874f;--amber:#f7c94f;--text:#1a1d2e;--muted:#6b7280;--border:#e2e6f0}
+:root{--bg:#f4f6fa;--surface:#fff;--surface2:#f0f2f7;--accent:#4f8ef7;--navy:#1a4a8a;--green:#3ecf8e;--orange:#f7874f;--amber:#f7c94f;--text:#1a1d2e;--muted:#6b7280;--border:#e2e6f0;--red:#e53e3e;--yellow:#f59e0b;--blue:#3b82f6}
 body{background:var(--bg);color:var(--text);font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:14px;min-height:100vh}
 header{background:var(--navy);color:#fff;padding:14px 18px;position:sticky;top:0;z-index:100;text-align:center}
 header h1{font-size:20px;font-weight:700}
@@ -14,8 +14,9 @@ header .sub{font-size:11px;opacity:.85;margin-top:2px}
 .tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto}
 .tab{padding:11px 13px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0}
 .tab.on{color:var(--accent);border-bottom-color:var(--accent)}
-.main{padding:16px;max-width:880px;margin:0 auto}
+.main{padding:16px;max-width:960px;margin:0 auto}
 .sc{display:none}.sc.on{display:block}
+/* 요약 카드 */
 .sg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
 .scard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
 .scard .n{font-size:28px;font-weight:800;line-height:1}
@@ -27,27 +28,51 @@ header .sub{font-size:11px;opacity:.85;margin-top:2px}
 .fi{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--green))}
 .sl{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin:16px 0 8px;text-transform:uppercase}
 .sl.first{margin-top:0}
-.note{background:rgba(247,201,79,.12);border:1px solid rgba(247,201,79,.3);border-radius:8px;padding:9px 12px;font-size:11px;color:#b45309;margin-bottom:12px}
-.pr{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:6px}
-.prt{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.prn{font-size:14px;font-weight:700}
-.prr{display:flex;align-items:center;gap:8px}
-.bg{padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600}
-.bgd{background:rgba(62,207,142,.15);color:#1a9e6e}.bgi{background:rgba(79,142,247,.15);color:#3375d4}.bgw{background:rgba(122,127,153,.15);color:#6b7280}
-.pt{font-size:12px;color:var(--muted)}
-.mt{height:5px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:8px}
-.mf{height:100%;border-radius:99px;background:var(--accent)}.mf.d{background:var(--green)}
-.dt{display:flex;gap:6px;flex-wrap:wrap}
-.dtg{font-size:11px;color:var(--muted);background:var(--surface2);border-radius:5px;padding:2px 8px}
-.dtg.sch{color:var(--navy);background:rgba(26,74,138,.08)}
+/* 간트차트 */
+.gantt-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.gantt-legend{display:flex;gap:14px;padding:10px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.leg-dot{width:12px;height:12px;border-radius:3px}
+.gantt-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.gantt{min-width:700px}
+/* 헤더 행 */
+.g-hrow{display:grid;grid-template-columns:130px 1fr;background:var(--surface2);border-bottom:1px solid var(--border)}
+.g-hlabel{padding:6px 10px;font-size:11px;font-weight:700;color:var(--muted);border-right:1px solid var(--border)}
+.g-hcols{display:flex;position:relative}
+.g-month{position:absolute;top:0;left:0;right:0;height:18px;display:flex}
+.g-mblock{text-align:center;font-size:10px;font-weight:700;color:var(--navy);border-right:1px solid var(--border);line-height:18px;background:rgba(26,74,138,.06)}
+.g-days{display:flex;height:18px;margin-top:18px}
+.g-day{flex:1;text-align:center;font-size:9px;color:var(--muted);border-right:1px solid var(--border);line-height:18px;min-width:12px}
+.g-day.we{color:#e53e3e;background:rgba(229,62,62,.04)}
+.g-day.today{background:rgba(79,142,247,.15);color:var(--accent);font-weight:700}
+/* 데이터 행 */
+.g-row{display:grid;grid-template-columns:130px 1fr;border-bottom:1px solid var(--border);min-height:36px}
+.g-row:last-child{border-bottom:none}
+.g-row:hover{background:rgba(79,142,247,.03)}
+.g-label{padding:8px 10px;font-size:12px;font-weight:600;border-right:1px solid var(--border);display:flex;align-items:center;word-break:keep-all;line-height:1.3}
+.g-bar-wrap{position:relative;display:flex;align-items:center;min-height:36px}
+/* 간트 바 */
+.g-bar{position:absolute;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;overflow:hidden;white-space:nowrap;padding:0 4px}
+.g-bar.done{background:#e53e3e}
+.g-bar.wip{background:#f59e0b}
+.g-bar.plan{background:#3b82f6}
+.g-arrow{position:absolute;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#6b7280}
+/* 오늘 선 */
+.g-today-line{position:absolute;top:0;bottom:0;width:2px;background:rgba(79,142,247,.6);z-index:10;pointer-events:none}
+.g-today-line::before{content:'오늘';position:absolute;top:-16px;left:-12px;font-size:9px;color:var(--accent);font-weight:700;white-space:nowrap}
+/* 변경이력 */
+.chg{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.chg-h{background:var(--surface2);padding:10px 14px;font-size:12px;font-weight:700;color:var(--navy);border-bottom:1px solid var(--border)}
+.chg-row{display:flex;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);font-size:12px;align-items:flex-start}
+.chg-row:last-child{border-bottom:none}
+.chg-date{color:var(--muted);min-width:60px;font-size:11px;padding-top:1px}
+.chg-sys{font-weight:700;color:var(--navy);min-width:80px}
+.chg-desc{color:var(--text);line-height:1.5;flex:1}
+/* 업체 */
 .vc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
 .vn{font-size:14px;font-weight:700}
 .vp{font-size:12px;color:var(--muted);margin-top:2px}
 .vb{background:rgba(62,207,142,.15);color:#1a9e6e;border:1px solid rgba(62,207,142,.3);border-radius:7px;padding:7px 14px;font-size:13px;font-weight:700;text-decoration:none}
-.fl{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px}
-.fs{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}.fs:last-child{margin-bottom:0}
-.fn{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.fd{font-size:13px;line-height:1.5;color:var(--muted)}.fd b{color:var(--text)}
 /* 일일보고 */
 .rep{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px}
 .reph{background:var(--navy);color:#fff;padding:14px 16px}
@@ -67,6 +92,24 @@ header .sub{font-size:11px;opacity:.85;margin-top:2px}
 .rbtn{flex:1;background:var(--navy);color:#fff;border:none;border-radius:8px;padding:11px;font-size:13px;font-weight:700;cursor:pointer}
 .rbtn.g{background:#fff;color:var(--navy);border:1px solid var(--navy)}
 .todo{background:#fff8e1;border:1px dashed var(--amber);border-radius:8px;padding:12px;font-size:12px;color:#b45309;line-height:1.7}
+/* 사진탭 */
+.fl{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px}
+.fs{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}.fs:last-child{margin-bottom:0}
+.fn{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fd{font-size:13px;line-height:1.5;color:var(--muted)}.fd b{color:var(--text)}
+/* 등록 */
+.pr{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:6px}
+.prt{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.prn{font-size:14px;font-weight:700}
+.prr{display:flex;align-items:center;gap:8px}
+.bg{padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600}
+.bgd{background:rgba(62,207,142,.15);color:#1a9e6e}.bgi{background:rgba(79,142,247,.15);color:#3375d4}.bgw{background:rgba(122,127,153,.15);color:#6b7280}
+.pt{font-size:12px;color:var(--muted)}
+.mt{height:5px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:8px}
+.mf{height:100%;border-radius:99px;background:var(--accent)}.mf.d{background:var(--green)}
+.dt{display:flex;gap:6px;flex-wrap:wrap}
+.dtg{font-size:11px;color:var(--muted);background:var(--surface2);border-radius:5px;padding:2px 8px}
+.dtg.sch{color:var(--navy);background:rgba(26,74,138,.08)}
 </style>
 </head>
 <body>
@@ -83,6 +126,7 @@ header .sub{font-size:11px;opacity:.85;margin-top:2px}
 </div>
 <div class="main">
 
+<!-- 대시보드 -->
 <div class="sc on" id="x-d">
   <div class="sg">
     <div class="scard"><div class="n g" id="cd">-</div><div class="l">완료</div></div>
@@ -90,12 +134,28 @@ header .sub{font-size:11px;opacity:.85;margin-top:2px}
     <div class="scard"><div class="n a" id="cw">-</div><div class="l">예정</div></div>
   </div>
   <div class="ov"><div class="ovt"><span style="font-weight:700">전체 완료율</span><span style="color:var(--green);font-weight:800" id="pct">-</span></div><div class="tr"><div class="fi" id="fill" style="width:0%"></div></div></div>
-  <div class="sl first">🔧 구축 시스템</div>
-  <div id="plist"></div>
-  <div class="sl">🚀 통합테스트 / 운영 (구축 후)</div>
-  <div id="oplist"></div>
+
+  <div class="sl first">📅 공정 일정 (간트차트)</div>
+  <div class="gantt-wrap">
+    <div class="gantt-legend">
+      <span class="leg"><span class="leg-dot" style="background:#e53e3e"></span>완료</span>
+      <span class="leg"><span class="leg-dot" style="background:#f59e0b"></span>진행중</span>
+      <span class="leg"><span class="leg-dot" style="background:#3b82f6"></span>예정</span>
+      <span class="leg"><span style="font-size:14px">➡️</span>OPEN 예정</span>
+    </div>
+    <div class="gantt-scroll">
+      <div class="gantt" id="gantt"></div>
+    </div>
+  </div>
+
+  <div class="sl">📋 일정 변경 이력</div>
+  <div class="chg">
+    <div class="chg-h">변경 이력</div>
+    <div id="chglist"></div>
+  </div>
 </div>
 
+<!-- 사진 -->
 <div class="sc" id="x-p">
   <div class="sl first">사진 올리는 법</div>
   <div class="fl">
@@ -106,6 +166,7 @@ header .sub{font-size:11px;opacity:.85;margin-top:2px}
   <div class="todo">📌 다음 작업: 노션 진척사진 DB에서 실제 사진 불러와 공정별·날짜별로 표시</div>
 </div>
 
+<!-- 일일보고 -->
 <div class="sc" id="x-r">
   <div class="rep">
     <div class="reph"><div class="rt">📋 통합경비시스템 구축 일일보고</div><div class="rd">2026.06.24 (수) · 동탄역시범 한화꿈에그린 프레스티지</div></div>
@@ -115,7 +176,7 @@ header .sub{font-size:11px;opacity:.85;margin-top:2px}
         <div class="rno">1. 경관조명</div>
         <div class="rti">131동 옆 계단 경관조명 설치</div>
         <div class="rimg"><div class="rph">사진1</div><div class="rph">사진2</div><div class="rph">사진3</div></div>
-        <div class="rdesc"><span class="lb">내용:</span> 131동 계단 경관조명 설치 진행. 배선 연결 및 점검 완료. (남효A&A)</div>
+        <div class="rdesc"><span class="lb">내용:</span> 131동 계단 경관조명 설치 진행. 배선 연결 및 점검 완료. (남효A&amp;A)</div>
       </div>
       <div class="ritem">
         <div class="rno">2. 출입통제 (안면인식)</div>
@@ -126,12 +187,13 @@ header .sub{font-size:11px;opacity:.85;margin-top:2px}
     </div>
     <div class="repf"><button class="rbtn" onclick="cpReport()">📋 복사 → 카톡</button><button class="rbtn g">📄 PDF 저장</button></div>
   </div>
-  <div class="todo">📌 다음 작업: 카톡 캡처에서 사진 추출 → 이 보고서 사진칸에 자동 삽입. 복사/PDF 기능 연결</div>
+  <div class="todo">📌 다음 작업: 카톡 캡처에서 사진 추출 → 이 보고서 사진칸에 자동 삽입</div>
 </div>
 
-<div class="sc" id="x-v"><div id="vlist"></div>
-</div>
+<!-- 업체 -->
+<div class="sc" id="x-v"><div id="vlist"></div></div>
 
+<!-- 등록 -->
 <div class="sc" id="x-reg">
   <div class="sl first">등록 / 수정 (관리소장용)</div>
   <div class="fl">
@@ -139,37 +201,93 @@ header .sub{font-size:11px;opacity:.85;margin-top:2px}
     <div class="fs"><div class="fn">B</div><div class="fd"><b>일정 등록</b><br>구축 일정 + 통합테스트/운영 일정</div></div>
     <div class="fs"><div class="fn">C</div><div class="fd"><b>업체 연락처 추가/수정</b><br>누락분 채우기</div></div>
   </div>
-  <div class="todo">📌 다음 작업: 입력폼 → 노션 자동 저장 연결 (현재는 구조만)</div>
+  <div class="todo">📌 다음 작업: 입력폼 → 노션 자동 저장 연결</div>
 </div>
 
 </div>
 <script>
-const PROC=[
- {n:"CCTV",s:"진행중",p:70,v:"SK쉴더스",q:"639EA",note:"지상외곽 설치완료, 7월 셋팅·보완"},
- {n:"주차관제시스템",s:"완료",p:100,v:"아마노코리아",q:"12EA",note:""},
- {n:"경관조명",s:"진행중",p:80,v:"남효A&A",q:"1식",note:"기본점등완료, 추가요청분 진행"},
- {n:"스피드게이트",s:"완료",p:100,v:"SK쉴더스",q:"2LANE",note:""},
- {n:"원패스시스템",s:"완료",p:100,v:"다산카이스",q:"114EA",note:"21EA 증가"},
- {n:"키즈룸",s:"진행중",p:90,v:"알에프지",q:"1식",note:"안전성검사 회신후 OPEN"},
- {n:"커뮤니티출입통제",s:"완료",p:100,v:"SK쉴더스",q:"18EA",note:""},
- {n:"커뮤니티 KIOSK",s:"완료",p:100,v:"트러스테이",q:"1EA",note:""},
- {n:"입주민APP",s:"진행중",p:60,v:"트러스테이",q:"1식",note:"데이터 이관 진행"},
- {n:"방재실·경비초소 대형모니터",s:"완료",p:100,v:"TPM",q:"19EA",note:""},
- {n:"근태관리시스템",s:"완료",p:100,v:"-",q:"1식",note:""},
- {n:"순찰관리시스템(순찰Tag)",s:"완료",p:100,v:"-",q:"1식",note:""},
- {n:"경비원 바디캠",s:"완료",p:100,v:"-",q:"4대",note:""},
- {n:"순찰용 전기자전거",s:"완료",p:100,v:"-",q:"4EA",note:""},
- {n:"수하물 전기오토바이",s:"완료",p:100,v:"-",q:"1EA",note:""},
- {n:"입주민구호물품",s:"완료",p:100,v:"-",q:"3개소",note:""},
- {n:"경비초소 대형간판·로고",s:"완료",p:100,v:"-",q:"3개소",note:""},
- {n:"경비초소 비상벨",s:"완료",p:100,v:"-",q:"3개소",note:""}
+// ── 날짜 유틸 ──
+const Y=2026;
+// 날짜 → 전체 일수 인덱스 (6/1=0 기준)
+function dIdx(m,d){
+  const ref=new Date(Y,5,1); // 6월1일
+  const t=new Date(Y,m-1,d);
+  return Math.round((t-ref)/(1000*60*60*24));
+}
+// 오늘
+const now=new Date();
+const todayIdx=dIdx(now.getMonth()+1,now.getDate());
+
+// ── 공정 데이터 (엑셀 공정표 기반) ──
+// phases: [{type:'done'|'wip'|'plan', s:[m,d], e:[m,d], label:''}]
+// open: [m,d] OPEN 예정일 (화살표)
+const GANTT=[
+ {n:'입주민APP',
+  phases:[{type:'done',s:[6,1],e:[6,23],label:'완료'}],
+  open:[7,1]},
+ {n:'원패스시스템',
+  phases:[{type:'done',s:[6,1],e:[6,10],label:'완료'}],
+  open:[6,11]},
+ {n:'커뮤니티 KIOSK',
+  phases:[{type:'done',s:[6,1],e:[6,23],label:'완료'}],
+  open:[7,1]},
+ {n:'커뮤니티출입통제',
+  phases:[{type:'done',s:[6,1],e:[6,23],label:'완료'}],
+  open:[7,1]},
+ {n:'스피드게이트',
+  phases:[{type:'done',s:[6,1],e:[6,23],label:'완료'}],
+  open:[7,1]},
+ {n:'주차관제시스템',
+  phases:[{type:'done',s:[6,1],e:[6,23],label:'완료'}],
+  open:[7,1]},
+ {n:'경관조명',
+  phases:[
+   {type:'done',s:[6,1],e:[6,19],label:'완료'},
+   {type:'wip', s:[6,20],e:[6,25],label:'문주·주차장'},
+   {type:'plan',s:[6,26],e:[7,10],label:'추가요청분'}
+  ]},
+ {n:'CCTV',
+  phases:[
+   {type:'done',s:[6,1],e:[6,22],label:'완료'},
+   {type:'wip', s:[6,23],e:[6,30],label:'승강기·스카이뷰'},
+   {type:'plan',s:[7,1],e:[7,10],label:'셋팅 및 보완'}
+  ]},
+ {n:'방재실·경비초소 모니터',
+  phases:[{type:'done',s:[6,1],e:[6,19],label:'완료'}]},
+ {n:'키즈룸',
+  phases:[
+   {type:'done',s:[6,1],e:[6,19],label:'완료'},
+   {type:'wip', s:[6,22],e:[6,26],label:'안전성검사'},
+   {type:'plan',s:[7,1],e:[7,12],label:'검사결과 후 OPEN'}
+  ],
+  open:[7,9]},
+ {n:'경비초소 간판·로고',
+  phases:[{type:'done',s:[6,1],e:[6,23],label:'완료'}]},
+ {n:'경비초소 비상벨',
+  phases:[{type:'done',s:[6,1],e:[6,23],label:'완료'}]},
+ {n:'근태관리시스템',
+  phases:[{type:'done',s:[6,1],e:[6,23],label:'완료'}]},
+ {n:'순찰관리시스템',
+  phases:[{type:'done',s:[6,1],e:[6,23],label:'완료'}]},
+ {n:'경비원 바디캠',
+  phases:[{type:'done',s:[6,1],e:[6,23],label:'완료'}]},
+ {n:'입주민구호물품',
+  phases:[{type:'done',s:[6,1],e:[6,23],label:'완료'}]},
+ {n:'순찰용 전기자전거',
+  phases:[{type:'done',s:[6,1],e:[6,23],label:'완료'}]},
+ {n:'수하물 전기오토바이',
+  phases:[{type:'done',s:[6,1],e:[6,23],label:'완료'}]},
 ];
-const OPS=[
- {n:"전체 통합관리시스템 운영(시범테스트)",s:"예정",p:0,note:"노크타운 연동, 구축 후 시범운영"},
- {n:"주차관제시스템(방문예약·등록)",s:"예정",p:0,note:"방문예약 운영"},
- {n:"원패스시스템(공동현관)",s:"예정",p:0,note:""},
- {n:"홈페이지(입주민+관리사무소)",s:"예정",p:0,note:"노크타운 플랫폼"}
+
+// ── 변경이력 ──
+const HISTORY=[
+ {date:'6/24',sys:'원패스시스템',desc:'수량 114EA → 135EA (21EA 증가)'},
+ {date:'6/24',sys:'입주민APP',desc:'아파트너 DATA 이관 별도 진행 확정'},
+ {date:'6/24',sys:'키즈룸',desc:'안전성검사 접수, 결과 후 OPEN 확정'},
+ {date:'6/24',sys:'경관조명',desc:'주가요청분(공동시설명칭, 수목경관조명1개소) 추가'},
 ];
+
+// ── 업체 ──
 const VEND=[
  {c:"CCTV",n:"SK쉴더스",pe:"박경열 책임",ph:"010-2997-4321",note:"CCTV 기기"},
  {c:"CCTV",n:"SK쉴더스",pe:"김환상 팀장",ph:"010-8964-3679",note:"CCTV 공사"},
@@ -182,22 +300,133 @@ const VEND=[
  {c:"스피드게이트",n:"엔에스게이트",pe:"김민관 부사장",ph:"010-2957-3619",note:""},
  {c:"상황실",n:"TPM",pe:"김병준 대표",ph:"010-9112-5780",note:"상황실 비디오월·모니터"},
  {c:"키즈룸",n:"알에프지",pe:"최병원 대표",ph:"010-3693-4105",note:"키즈룸 기구"},
- {c:"키즈룸",n:"TPM",pe:"김병준 대표",ph:"010-91175780",note:"키즈룸 조명"},
+ {c:"키즈룸",n:"TPM",pe:"김병준 대표",ph:"010-91175780",note:"키즈룸 조명 ⚠️번호확인"},
 ];
-function sw(id,el){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.getElementById('x-'+id).classList.add('on');el.classList.add('on');}
-function pcard(x){const bc=x.s==='완료'?'bgd':x.s==='진행중'?'bgi':'bgw';const fc=x.s==='완료'?'d':'';return `<div class="pr"><div class="prt"><span class="prn">${x.n}</span><div class="prr"><span class="pt">${x.p}%</span><span class="bg ${bc}">${x.s}</span></div></div><div class="mt"><div class="mf ${fc}" style="width:${x.p}%"></div></div><div class="dt">${x.v&&x.v!=='-'?`<span class="dtg">${x.v}</span>`:''}${x.q?`<span class="dtg">${x.q}</span>`:''}${x.note?`<span class="dtg sch">${x.note}</span>`:''}</div></div>`;}
-function render(){
- const d=PROC.filter(x=>x.s==='완료').length,i=PROC.filter(x=>x.s==='진행중').length,w=PROC.filter(x=>x.s==='예정').length;
- const pct=Math.round(d/PROC.length*100);
- cd.textContent=d;ci.textContent=i;cw.textContent=w;pct&&(document.getElementById('pct').textContent=pct+'%');document.getElementById('fill').style.width=pct+'%';
- document.getElementById('plist').innerHTML=PROC.map(pcard).join('');
- document.getElementById('oplist').innerHTML=OPS.map(pcard).join('');
- let v='';const g={};VEND.forEach(x=>{(g[x.c]=g[x.c]||[]).push(x);});
- Object.entries(g).forEach(([c,vs])=>{v+=`<div class="sl">${c}</div>`;vs.forEach(x=>{v+=`<div class="vc"><div><div class="vn">${x.n}</div><div class="vp">${x.pe} · ${x.ph}</div>${x.note?`<div style="font-size:10px;color:var(--muted);margin-top:2px">${x.note}</div>`:''}</div>${x.ph?`<a class="vb" href="tel:${x.ph}">📞 전화</a>`:'<span class="vp">연락처 미등록</span>'}</div>`;});});
- document.getElementById('vlist').innerHTML=v;
+
+// ── 간트 렌더 ──
+function renderGantt(){
+  // 전체 기간: 6/1 ~ 7/19 (총 49일)
+  const TOTAL=49; // 6/1(0) ~ 7/19(48)
+  const MONTHS=[
+    {label:'6월',days:30,startIdx:0},
+    {label:'7월',days:19,startIdx:30}
+  ];
+  // 요일 (6/1=월요일 기준, 2026년 6월1일=월)
+  const WD=['월','화','수','목','금','토','일'];
+  function getWd(idx){return WD[(idx)%7];} // 6/1=월=0
+  function isWe(idx){const d=idx%7;return d===5||d===6;}
+
+  let html='';
+  // 헤더
+  html+=`<div class="g-hrow">
+    <div class="g-hlabel">시스템</div>
+    <div class="g-hcols" style="position:relative;min-height:36px">
+      <div class="g-month">`;
+  // 월 블록
+  let w6=0,w7=0;
+  // 각 날의 너비 = 100%/TOTAL
+  html+=`<div class="g-mblock" style="width:${30/TOTAL*100}%">6월</div>`;
+  html+=`<div class="g-mblock" style="width:${19/TOTAL*100}%;border-right:none">7월</div>`;
+  html+='</div><div class="g-days">';
+  for(let i=0;i<TOTAL;i++){
+    let d,m;
+    if(i<30){m=6;d=i+1;}else{m=7;d=i-29;}
+    const we=isWe(i);
+    const isTd=(i===todayIdx);
+    html+=`<div class="g-day${we?' we':''}${isTd?' today':''}">${d}</div>`;
+  }
+  html+='</div></div></div>';
+
+  // 데이터 행
+  GANTT.forEach(item=>{
+    html+=`<div class="g-row">
+      <div class="g-label">${item.n}</div>
+      <div class="g-bar-wrap">`;
+
+    // 오늘 선
+    if(todayIdx>=0&&todayIdx<TOTAL){
+      const lx=todayIdx/TOTAL*100;
+      html+=`<div class="g-today-line" style="left:${lx}%"></div>`;
+    }
+
+    // 바 그리기
+    item.phases.forEach(ph=>{
+      const si=dIdx(ph.s[0],ph.s[1]);
+      const ei=dIdx(ph.e[0],ph.e[1]);
+      const sl=Math.max(si,0)/TOTAL*100;
+      const el=Math.min(ei+1,TOTAL)/TOTAL*100;
+      const w=el-sl;
+      if(w<=0)return;
+      html+=`<div class="g-bar ${ph.type}" style="left:${sl}%;width:${w}%">${ph.label||''}</div>`;
+    });
+
+    // OPEN 화살표
+    if(item.open){
+      const oi=dIdx(item.open[0],item.open[1]);
+      if(oi>=0&&oi<TOTAL){
+        const ox=oi/TOTAL*100;
+        html+=`<div class="g-arrow" style="left:calc(${ox}% - 10px)">➡️</div>`;
+      }
+    }
+
+    html+='</div></div>';
+  });
+
+  document.getElementById('gantt').innerHTML=html;
+}
+
+// ── 요약 카드 ──
+function renderSummary(){
+  const done=GANTT.filter(x=>x.phases.every(p=>p.type==='done')).length;
+  const wip=GANTT.filter(x=>x.phases.some(p=>p.type==='wip')).length;
+  const plan=GANTT.filter(x=>x.phases.every(p=>p.type==='plan')).length;
+  const pct=Math.round(done/GANTT.length*100);
+  document.getElementById('cd').textContent=done;
+  document.getElementById('ci').textContent=wip;
+  document.getElementById('cw').textContent=plan;
+  document.getElementById('pct').textContent=pct+'%';
+  document.getElementById('fill').style.width=pct+'%';
+}
+
+// ── 변경이력 ──
+function renderHistory(){
+  document.getElementById('chglist').innerHTML=
+    HISTORY.map(h=>`<div class="chg-row">
+      <div class="chg-date">${h.date}</div>
+      <div class="chg-sys">${h.sys}</div>
+      <div class="chg-desc">${h.desc}</div>
+    </div>`).join('');
+}
+
+// ── 업체 ──
+function renderVend(){
+  let v='';const g={};
+  VEND.forEach(x=>{(g[x.c]=g[x.c]||[]).push(x);});
+  Object.entries(g).forEach(([c,vs])=>{
+    v+=`<div class="sl">${c}</div>`;
+    vs.forEach(x=>{
+      v+=`<div class="vc"><div>
+        <div class="vn">${x.n}</div>
+        <div class="vp">${x.pe} · ${x.ph}</div>
+        ${x.note?`<div style="font-size:10px;color:var(--muted);margin-top:2px">${x.note}</div>`:''}
+      </div>${x.ph?`<a class="vb" href="tel:${x.ph}">📞 전화</a>`:'<span class="vp">연락처 미등록</span>'}</div>`;
+    });
+  });
+  document.getElementById('vlist').innerHTML=v;
+}
+
+function sw(id,el){
+  document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('x-'+id).classList.add('on');
+  el.classList.add('on');
 }
 function cpReport(){alert('다음 작업에서 연결됩니다');}
-render();
+
+renderSummary();
+renderGantt();
+renderHistory();
+renderVend();
 </script>
 </body>
 </html>
