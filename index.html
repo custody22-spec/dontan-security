@@ -133,6 +133,15 @@ input[type=range]{flex:1;accent-color:var(--accent)}
 /* 토스트 */
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(40px);background:#1a1d2e;color:#fff;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;z-index:999;white-space:nowrap}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* API 키 모달 */
+#api-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
+#api-modal.hide{display:none}
+.api-box{background:var(--surface);border-radius:14px;padding:24px;width:100%;max-width:360px}
+.api-box h2{font-size:16px;font-weight:700;margin-bottom:8px}
+.api-box p{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.7}
+.api-box input{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;margin-bottom:10px;font-family:monospace;color:var(--text)}
+.api-save{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}
+.api-hint{font-size:11px;color:var(--muted);text-align:center;margin-top:8px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -274,6 +283,18 @@ input[type=range]{flex:1;accent-color:var(--accent)}
 </div>
 
 </div><!-- main -->
+
+<!-- API 키 입력 모달 -->
+<div id="api-modal" class="hide">
+  <div class="api-box">
+    <h2>🔑 API 키 입력</h2>
+    <p>Anthropic API 키를 입력하세요.<br>이 기기에만 저장되며 GitHub에 올라가지 않습니다.</p>
+    <input type="password" id="api-key-input" placeholder="sk-ant-api03-...">
+    <button class="api-save" onclick="saveApiKey()">저장하고 시작</button>
+    <div class="api-hint">console.anthropic.com → API Keys<br>한 번만 입력하면 다음부턴 자동 로드</div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -283,6 +304,19 @@ const MCP=[{type:"url",url:"https://mcp.notion.com/mcp",name:"notion-mcp"}];
 const COL_PROGRESS="collection://cd0befc1-0dac-47e5-a79e-9208d4fc705d";
 const COL_VENDOR="collection://160649ec-4c18-4979-93ba-a78f5ba99831";
 const COL_PHOTO="collection://e1052b00-52d1-42ab-a019-f518c030484a";
+
+// API 키 관리
+function getApiKey(){ return localStorage.getItem('dontan_api_key')||''; }
+function saveApiKey(){
+  const k=document.getElementById('api-key-input').value.trim();
+  if(!k||!k.startsWith('sk-')){alert('올바른 API 키를 입력하세요 (sk-로 시작)');return;}
+  localStorage.setItem('dontan_api_key',k);
+  document.getElementById('api-modal').classList.add('hide');
+  loadAll();
+}
+function checkApiKey(){
+  if(!getApiKey()) document.getElementById('api-modal').classList.remove('hide');
+}
 
 const today=new Date();
 const todayStr=today.getFullYear()+'.'+(String(today.getMonth()+1).padStart(2,'0'))+'.'+String(today.getDate()).padStart(2,'0');
@@ -307,8 +341,10 @@ function sw(id,el){
 }
 
 async function callClaude(prompt,imgs){
+  const key=getApiKey();
+  if(!key){document.getElementById('api-modal').classList.remove('hide');throw new Error('API 키 없음');}
   const content=imgs?[...imgs.map(b=>({type:'image',source:{type:'base64',media_type:'image/jpeg',data:b}})),{type:'text',text:prompt}]:[{type:'text',text:prompt}];
-  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},
     body:JSON.stringify({model:MODEL,max_tokens:1000,mcp_servers:MCP,messages:[{role:'user',content}]})});
   return await r.json();
 }
@@ -567,7 +603,8 @@ function toast(msg){
 }
 
 function loadAll(){loadDash();}
-loadAll();
+checkApiKey();
+if(getApiKey()) loadAll();
 </script>
 </body>
 </html>
