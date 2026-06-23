@@ -163,7 +163,6 @@ header .sub{font-size:11px;opacity:.85;margin-top:2px}
     <div class="fs"><div class="fn">2</div><div class="fd"><b>관리소장에게 전달</b><br>소장이 분석·정리해서 노션 저장</div></div>
     <div class="fs"><div class="fn">3</div><div class="fd"><b>일일보고에 자동 반영</b><br>완료</div></div>
   </div>
-  <div class="todo">📌 다음 작업: 노션 진척사진 DB에서 실제 사진 불러와 공정별·날짜별로 표시</div>
 </div>
 
 <!-- 일일보고 -->
@@ -174,10 +173,8 @@ header .sub{font-size:11px;opacity:.85;margin-top:2px}
       <div class="rd" id="rep-date"></div>
     </div>
     <div class="repb">
-      <div class="rsum" id="rep-sum">노션 진척사진 DB 연동 후 자동 생성 예정</div>
-      <div style="text-align:center;padding:30px 0;color:var(--muted);font-size:13px">
-        📌 사진탭에서 사진 등록 후 일일보고가 자동 구성됩니다
-      </div>
+      <div class="rsum" id="rep-sum"></div>
+      <div id="rep-items"></div>
     </div>
     <div class="repf">
       <button class="rbtn" onclick="cpReport()">📋 복사 → 카톡</button>
@@ -197,7 +194,6 @@ header .sub{font-size:11px;opacity:.85;margin-top:2px}
     <div class="fs"><div class="fn">B</div><div class="fd"><b>일정 등록</b><br>구축 일정 + 통합테스트/운영 일정</div></div>
     <div class="fs"><div class="fn">C</div><div class="fd"><b>업체 연락처 추가/수정</b><br>누락분 채우기</div></div>
   </div>
-  <div class="todo">📌 다음 작업: 입력폼 → 노션 자동 저장 연결</div>
 </div>
 
 </div>
@@ -418,12 +414,49 @@ function sw(id,el){
   el.classList.add('on');
   location.hash=id;
 }
-function cpReport(){alert('다음 작업에서 연결됩니다');}
+function buildReport(){
+  const now=new Date();
+  const wd=['일','월','화','수','목','금','토'];
+  const dateStr=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} (${wd[now.getDay()]})`;
+  document.getElementById('rep-date').textContent=dateStr+' · 동탄역시범 한화꿈에그린 프레스티지';
+  const d=PROC.filter(x=>x.s==='완료').length;
+  const i=PROC.filter(x=>x.s==='진행중').length;
+  const w=PROC.filter(x=>x.s==='예정').length;
+  const pct=Math.round(d/PROC.length*100);
+  document.getElementById('rep-sum').innerHTML=`<b>전체 ${pct}%</b> (완료 ${d} / 진행중 ${i} / 예정 ${w})<br>금일 주요작업: ${PROC.filter(x=>x.s==='진행중').map(x=>x.n).join('·')} 진행`;
+  const items=PROC.filter(x=>x.s==='진행중');
+  let html='';
+  items.forEach((x,idx)=>{
+    html+=`<div class="ritem">
+      <div class="rno">${idx+1}. ${x.n}</div>
+      <div class="rti">${x.note||x.n+' 작업 진행중'}</div>
+      <div class="rimg"><div class="rph">사진1</div><div class="rph">사진2</div><div class="rph">사진3</div></div>
+      <div class="rdesc"><span class="lb">내용:</span> ${x.note||x.n+' 진행중.'} (${x.v||'-'}) · 진척도 ${x.p}%</div>
+    </div>`;
+  });
+  document.getElementById('rep-items').innerHTML=html;
+}
+function cpReport(){
+  const d=PROC.filter(x=>x.s==='완료').length;
+  const i=PROC.filter(x=>x.s==='진행중').length;
+  const pct=Math.round(d/PROC.length*100);
+  const now=new Date();
+  const wd=['일','월','화','수','목','금','토'];
+  let txt=`📋 통합경비시스템 구축 일일보고\n`;
+  txt+=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} (${wd[now.getDay()]})\n\n`;
+  txt+=`전체 ${pct}% (완료 ${d} / 진행중 ${i})\n\n`;
+  PROC.filter(x=>x.s==='진행중').forEach((x,idx)=>{
+    txt+=`${idx+1}. ${x.n}\n`;
+    txt+=`   ${x.note||x.n+' 작업 진행중'} (${x.v||'-'}) · ${x.p}%\n\n`;
+  });
+  navigator.clipboard.writeText(txt).then(()=>alert('카톡 붙여넣기 준비 완료!')).catch(()=>alert('복사 실패 - 수동으로 복사해주세요'));
+}
 
 renderSummary();
 renderGantt();
 renderHistory();
 renderVend();
+buildReport();
 
 // 일일보고 날짜 세팅
 (function(){
