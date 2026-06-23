@@ -6,418 +6,184 @@
 <title>통합경비 구축현황</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#f4f6fa;--surface:#ffffff;--surface2:#f0f2f7;
-  --accent:#4f8ef7;--green:#3ecf8e;--orange:#f7874f;--amber:#f7c94f;--red:#f74f4f;
-  --text:#1a1d2e;--muted:#6b7280;--border:#e2e6f0;--radius:10px;
-}
+:root{--bg:#f4f6fa;--surface:#fff;--surface2:#f0f2f7;--accent:#4f8ef7;--green:#3ecf8e;--orange:#f7874f;--amber:#f7c94f;--text:#1a1d2e;--muted:#6b7280;--border:#e2e6f0}
 body{background:var(--bg);color:var(--text);font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:14px;min-height:100vh}
-header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 18px;position:sticky;top:0;z-index:100}
 header h1{font-size:16px;font-weight:700}
 header .sub{font-size:11px;color:var(--muted);margin-top:2px}
-.refresh{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:13px;cursor:pointer;font-weight:600}
+header .upd{font-size:10px;color:var(--muted);margin-top:3px}
 .tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto}
-.tab{padding:11px 16px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0}
+.tab{padding:11px 14px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0}
 .tab.on{color:var(--accent);border-bottom-color:var(--accent)}
 .main{padding:16px;max-width:860px;margin:0 auto}
 .sc{display:none}.sc.on{display:block}
-.loading{display:flex;align-items:center;justify-content:center;height:180px;color:var(--muted);gap:8px}
-.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.sl{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin:16px 0 8px;text-transform:uppercase}
-.sl:first-child{margin-top:0}
-.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.scard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center}
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.scard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
 .scard .n{font-size:28px;font-weight:800;line-height:1}
 .scard .l{font-size:11px;color:var(--muted);margin-top:4px}
 .n.g{color:var(--green)}.n.b{color:var(--accent)}.n.a{color:var(--orange)}
-.overall{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px}
-.overall-top{display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px}
-.track{height:9px;background:var(--border);border-radius:99px;overflow:hidden}
-.fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .6s}
-.prow{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:6px}
-.prow-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.prow-name{font-size:14px;font-weight:700}
-.prow-right{display:flex;align-items:center;gap:8px}
-.badge{padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600}
-.bd{background:rgba(62,207,142,.15);color:var(--green)}
-.bi{background:rgba(79,142,247,.15);color:var(--accent)}
-.bw{background:rgba(122,127,153,.15);color:var(--muted)}
-.pct-text{font-size:12px;color:var(--muted)}
-.mtrack{height:5px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:8px}
-.mfill{height:100%;border-radius:99px;background:var(--accent)}
-.mfill.done{background:var(--green)}
-.dates{display:flex;gap:6px;flex-wrap:wrap}
-.dtag{font-size:10px;color:var(--muted);background:var(--surface2);border-radius:5px;padding:2px 7px}
-.dtag.changed{color:var(--amber);background:rgba(247,201,79,.1)}
-/* 입력 */
-.form-group{margin-bottom:12px}
-.form-label{font-size:12px;color:var(--muted);margin-bottom:5px;display:block}
-select,input[type=date],input[type=text],textarea{
-  width:100%;background:var(--surface);border:1px solid var(--border);
-  border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;
-  appearance:none;outline:none
-}
-select:focus,input:focus,textarea:focus{border-color:var(--accent)}
-textarea{resize:vertical;min-height:70px}
-.state-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.sbtn{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;text-align:center}
-.sbtn.on-wait{border-color:var(--muted);color:var(--text)}
-.sbtn.on-ing{border-color:var(--accent);color:var(--accent);background:rgba(79,142,247,.1)}
-.sbtn.on-done{border-color:var(--green);color:var(--green);background:rgba(62,207,142,.1)}
-.slider-row{display:flex;align-items:center;gap:10px}
-input[type=range]{flex:1;accent-color:var(--accent)}
-.pct-val{font-size:16px;font-weight:700;color:var(--accent);min-width:42px;text-align:right}
-.main-btn{width:100%;padding:12px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;margin-top:8px}
-.btn-blue{background:var(--accent);color:#fff}
-.btn-gray{background:var(--surface);border:1px solid var(--border);color:var(--text)}
-.btn-green{background:var(--green);color:#0f1117}
-/* 사진 */
-.upload-flow{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px}
-.flow-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
-.flow-step:last-child{margin-bottom:0}
-.step-num{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.step-desc{font-size:13px;line-height:1.6;color:var(--muted)}
-.step-desc strong{color:var(--text)}
-.upload-area{border:2px dashed var(--border);border-radius:var(--radius);padding:28px;text-align:center;cursor:pointer;margin-bottom:12px;transition:border-color .2s}
-.upload-area:hover{border-color:var(--accent)}
-.upload-area .icon{font-size:32px;margin-bottom:8px}
-.upload-area .ut{font-size:13px;color:var(--muted)}
-.upload-area .us{font-size:11px;color:var(--muted);margin-top:4px;opacity:.7}
-/* 업체 */
-.vcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
-.vname{font-size:14px;font-weight:700}
-.vperson{font-size:12px;color:var(--muted);margin-top:2px}
-.vcall{background:rgba(62,207,142,.15);color:var(--green);border:1px solid rgba(62,207,142,.3);border-radius:7px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:4px}
-/* 보고 */
-.report-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;font-size:13px;line-height:2;white-space:pre-wrap;color:var(--text)}
-.copy-btn{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px;font-size:14px;font-weight:700;color:var(--text);cursor:pointer;margin-bottom:8px}
-.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
-.notice{background:rgba(247,201,79,.08);border:1px solid rgba(247,201,79,.2);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--amber);margin-bottom:12px}
-.tag-chip{display:inline-flex;align-items:center;gap:4px;background:var(--surface2);border-radius:99px;padding:3px 9px;font-size:11px;color:var(--muted);margin:2px}
+.ov{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px}
+.ovt{display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px}
+.tr{height:9px;background:var(--border);border-radius:99px;overflow:hidden}
+.fi{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--green))}
+.sl{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin:14px 0 8px;text-transform:uppercase}
+.pr{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:6px}
+.prt{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.prn{font-size:14px;font-weight:700}
+.prr{display:flex;align-items:center;gap:8px}
+.bg{padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600}
+.bgd{background:rgba(62,207,142,.15);color:#1a9e6e}
+.bgi{background:rgba(79,142,247,.15);color:#3375d4}
+.bgw{background:rgba(122,127,153,.15);color:#6b7280}
+.pt{font-size:12px;color:var(--muted)}
+.mt{height:5px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:8px}
+.mf{height:100%;border-radius:99px;background:var(--accent)}
+.mf.d{background:var(--green)}
+.dt{display:flex;gap:6px;flex-wrap:wrap}
+.dtg{font-size:11px;color:var(--muted);background:var(--surface2);border-radius:5px;padding:2px 8px}
+.vc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+.vn{font-size:14px;font-weight:700}
+.vp{font-size:12px;color:var(--muted);margin-top:2px}
+.vb{background:rgba(62,207,142,.15);color:#1a9e6e;border:1px solid rgba(62,207,142,.3);border-radius:7px;padding:7px 14px;font-size:13px;font-weight:700;text-decoration:none}
+.fl{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px}
+.fs{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.fs:last-child{margin-bottom:0}
+.fn{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fd{font-size:13px;line-height:1.5;color:var(--muted)}
+.fd b{color:var(--text)}
+.rb{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px;font-size:13px;line-height:1.9;white-space:pre-wrap}
+.cb{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px;font-size:14px;font-weight:700;color:var(--text);cursor:pointer}
+.cb:hover{border-color:var(--accent);color:var(--accent)}
 </style>
 </head>
 <body>
 <header>
-  <div>
-    <h1>🛡️ 통합경비 구축현황</h1>
-    <div class="sub">동탄역시범 한화꿈에그린 프레스티지</div>
-  </div>
-  <button class="refresh" onclick="loadAll()">↻ 새로고침</button>
+  <h1>🛡️ 통합경비 구축현황</h1>
+  <div class="sub">동탄역시범 한화꿈에그린 프레스티지</div>
+  <div class="upd">기준일: 2026.06.24</div>
 </header>
-
 <div class="tabs">
-  <div class="tab on" onclick="sw('dash',this)">📊 대시보드</div>
-  <div class="tab" onclick="sw('input',this)">✏️ 입력</div>
-  <div class="tab" onclick="sw('photo',this)">📷 사진</div>
-  <div class="tab" onclick="sw('vendor',this)">📞 업체</div>
-  <div class="tab" onclick="sw('report',this)">📋 일일보고</div>
+  <div class="tab on" onclick="sw('d',this)">📊 대시보드</div>
+  <div class="tab" onclick="sw('v',this)">📞 업체</div>
+  <div class="tab" onclick="sw('p',this)">📷 사진</div>
+  <div class="tab" onclick="sw('r',this)">📋 일일보고</div>
 </div>
-
 <div class="main">
 
-<!-- 대시보드 -->
-<div class="sc on" id="s-dash">
-  <div id="dash-content"><div class="loading"><div class="spinner"></div> 불러오는 중...</div></div>
+<div class="sc on" id="x-d">
+  <div class="sg">
+    <div class="scard"><div class="n g" id="cnt-done">-</div><div class="l">완료</div></div>
+    <div class="scard"><div class="n b" id="cnt-ing">-</div><div class="l">진행중</div></div>
+    <div class="scard"><div class="n a" id="cnt-wait">-</div><div class="l">예정</div></div>
+  </div>
+  <div class="ov"><div class="ovt"><span style="font-weight:700">전체 완료율</span><span style="color:var(--green);font-weight:800" id="pct">-</span></div><div class="tr"><div class="fi" id="fill" style="width:0%"></div></div></div>
+  <div class="sl">공정별 현황</div>
+  <div id="proc-list"></div>
 </div>
 
-<!-- 입력 -->
-<div class="sc" id="s-input">
-  <div class="notice">⚠️ 변경사항 저장 시 이력이 자동으로 기록됩니다.</div>
-  <div class="form-group">
-    <label class="form-label">공정 선택</label>
-    <select id="inp-process">
-      <option value="">공정을 선택하세요</option>
-      <option>CCTV</option><option>주차관제</option><option>경관조명</option>
-      <option>스피드게이트</option><option>원패스시스템</option>
-      <option>방재실·관제소</option><option>키즈룸</option><option>기타</option>
-    </select>
+<div class="sc" id="x-v"><div id="vendor-list"></div></div>
+
+<div class="sc" id="x-p">
+  <div class="sl">사진 올리는 법</div>
+  <div class="fl">
+    <div class="fs"><div class="fn">1</div><div class="fd"><b>카톡 화면 캡처</b><br>사진+메모 보이는 화면 그대로</div></div>
+    <div class="fs"><div class="fn">2</div><div class="fd"><b>관리소장에게 전달</b><br>소장이 분석·정리해서 노션 저장</div></div>
+    <div class="fs"><div class="fn">3</div><div class="fd"><b>이 화면에 자동 반영</b><br>완료</div></div>
   </div>
-  <div class="form-group">
-    <label class="form-label">상태</label>
-    <div class="state-btns">
-      <div class="sbtn" onclick="setState('예정',this)">예정</div>
-      <div class="sbtn on-ing" onclick="setState('진행중',this)">진행중</div>
-      <div class="sbtn" onclick="setState('완료',this)">완료</div>
-    </div>
-  </div>
-  <div class="form-group">
-    <label class="form-label">진척도: <span id="pct-disp">70%</span></label>
-    <div class="slider-row">
-      <input type="range" min="0" max="100" value="70" id="pct-slider" oninput="document.getElementById('pct-disp').textContent=this.value+'%'">
-      <span class="pct-val" id="pct-val2">70%</span>
-    </div>
-  </div>
-  <div class="form-group">
-    <label class="form-label">일정 변경 (변경된 경우만)</label>
-    <select id="inp-stage" style="margin-bottom:8px">
-      <option value="">변경 단계 선택</option>
-      <option>1) 발주/계약</option><option>2) 납품/입고</option>
-      <option>3) 설치/시공</option><option>4) 시운전/테스트</option><option>5) 검수/인수</option>
-    </select>
-    <input type="date" id="inp-newdate" style="margin-bottom:8px">
-    <input type="text" id="inp-reason" placeholder="변경 사유 (선택)">
-  </div>
-  <div class="form-group">
-    <label class="form-label">특이사항</label>
-    <textarea id="inp-note" placeholder="오늘 특이사항 입력..."></textarea>
-  </div>
-  <button class="main-btn btn-blue" onclick="saveInput()">💾 저장 (노션 자동 반영)</button>
-  <div id="save-result" style="margin-top:10px;font-size:12px;color:var(--green);text-align:center"></div>
 </div>
 
-<!-- 사진 -->
-<div class="sc" id="s-photo">
-  <div class="sl">업로드 방법</div>
-  <div class="upload-flow">
-    <div class="flow-step">
-      <div class="step-num">1</div>
-      <div class="step-desc"><strong>카톡 화면 캡처</strong><br>사진+메모가 보이는 화면 그대로</div>
-    </div>
-    <div class="flow-step">
-      <div class="step-num">2</div>
-      <div class="step-desc"><strong>Claude.ai에 캡처 첨부</strong><br>공정 자동 분석 + 보고서 생성</div>
-    </div>
-    <div class="flow-step">
-      <div class="step-num">3</div>
-      <div class="step-desc"><strong>노션 자동 저장</strong><br>완료</div>
-    </div>
-  </div>
-  <div class="sl">직접 올리기 (선택)</div>
-  <div class="upload-area" onclick="document.getElementById('photo-file').click()">
-    <div class="icon">📁</div>
-    <div class="ut">사진 선택 (여러 장 가능)</div>
-    <div class="us">카톡에서 저장한 사진</div>
-    <input type="file" id="photo-file" multiple accept="image/*" style="display:none" onchange="handlePhotos(this)">
-  </div>
-  <div class="form-group">
-    <label class="form-label">공정</label>
-    <select id="photo-process">
-      <option value="">공정 선택</option>
-      <option>CCTV</option><option>주차관제</option><option>경관조명</option>
-      <option>스피드게이트</option><option>원패스시스템</option>
-      <option>방재실·관제소</option><option>키즈룸</option><option>기타</option>
-    </select>
-  </div>
-  <div id="photo-preview" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px"></div>
-  <div class="form-group">
-    <label class="form-label">특이사항</label>
-    <input type="text" id="photo-note" placeholder="작업 내용 간단히...">
-  </div>
-  <button class="main-btn btn-blue" onclick="uploadPhotos()">📤 노션에 저장</button>
-  <div id="photo-result" style="margin-top:10px;font-size:12px;color:var(--green);text-align:center"></div>
+<div class="sc" id="x-r">
+  <div class="sl">오늘 일일보고 — 2026.06.24</div>
+  <div class="rb" id="report-text"></div>
+  <button class="cb" onclick="copyReport()">📋 복사 → 카톡 붙여넣기</button>
 </div>
 
-<!-- 업체 -->
-<div class="sc" id="s-vendor">
-  <div id="vendor-content"><div class="loading"><div class="spinner"></div> 불러오는 중...</div></div>
 </div>
-
-<!-- 일일보고 -->
-<div class="sc" id="s-report">
-  <div id="report-content"><div class="loading"><div class="spinner"></div> 보고서 생성 중...</div></div>
-</div>
-
-</div><!-- main -->
 
 <script>
-const API = "https://api.anthropic.com/v1/messages";
-const MODEL = "claude-sonnet-4-6";
-const MCP = [{type:"url",url:"https://mcp.notion.com/mcp",name:"notion-mcp"}];
-const COL_PROGRESS = "collection://cd0befc1-0dac-47e5-a79e-9208d4fc705d";
-const COL_VENDOR   = "collection://160649ec-4c18-4979-93ba-a78f5ba99831";
-const COL_PHOTO    = "collection://e1052b00-52d1-42ab-a019-f518c030484a";
-const TODAY = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\. /g,'.').replace('.','');
-
-let state = {status:'진행중', pct:70};
+const PROC = [
+  {name:"CCTV", status:"진행중", pct:70, vendor:"SK쉴더스", note:"지상외곽 등 설치완료, 7월 셋팅·보완", qty:"639EA"},
+  {name:"주차관제시스템", status:"완료", pct:100, vendor:"아마노코리아", note:"", qty:"12EA"},
+  {name:"경관조명", status:"진행중", pct:80, vendor:"남효A&A", note:"기본 점등완료, 추가요청분 진행", qty:"1식"},
+  {name:"스피드게이트", status:"완료", pct:100, vendor:"SK쉴더스", note:"", qty:"2LANE"},
+  {name:"원패스시스템", status:"완료", pct:100, vendor:"다산카이스", note:"21EA 증가", qty:"114EA"},
+  {name:"키즈룸", status:"진행중", pct:90, vendor:"알에프지", note:"안전성검사 회신 후 OPEN, 사후확인 필요", qty:"1식"},
+  {name:"커뮤니티출입통제", status:"완료", pct:100, vendor:"SK쉴더스", note:"", qty:"-"},
+  {name:"방재실·관제소 모니터", status:"완료", pct:100, vendor:"SK쉴더스", note:"", qty:"-"},
+  {name:"순찰관리시스템", status:"완료", pct:100, vendor:"SK쉴더스", note:"", qty:"-"},
+  {name:"경비원 바디캠", status:"완료", pct:100, vendor:"SK쉴더스", note:"", qty:"-"},
+  {name:"비상벨", status:"완료", pct:100, vendor:"SK쉴더스", note:"", qty:"-"},
+  {name:"근태관리시스템", status:"완료", pct:100, vendor:"SK쉴더스", note:"", qty:"-"},
+  {name:"커뮤니티 KIOSK", status:"완료", pct:100, vendor:"TPM", note:"", qty:"-"},
+  {name:"순찰용 전기자전거", status:"완료", pct:100, vendor:"-", note:"", qty:"-"},
+  {name:"수하물 전기오토바이", status:"완료", pct:100, vendor:"-", note:"", qty:"-"},
+  {name:"입주민구호물품", status:"완료", pct:100, vendor:"-", note:"", qty:"-"},
+  {name:"경비초소 간판·로고", status:"완료", pct:100, vendor:"-", note:"", qty:"-"},
+  {name:"입주민APP", status:"진행중", pct:60, vendor:"트러스테이", note:"데이터 이관 별도 진행", qty:"-"}
+];
+const VENDORS = [
+  {cat:"CCTV·스피드게이트·통합경비", name:"SK쉴더스", person:"-", phone:""},
+  {cat:"주차관제", name:"아마노코리아", person:"-", phone:""},
+  {cat:"경관조명", name:"남효에이앤에이", person:"-", phone:""},
+  {cat:"원패스시스템", name:"다산카이스", person:"-", phone:""},
+  {cat:"키즈룸", name:"알에프지", person:"-", phone:""},
+  {cat:"커뮤니티 KIOSK", name:"TPM", person:"-", phone:""},
+  {cat:"입주민APP", name:"트러스테이", person:"-", phone:""},
+  {cat:"기타", name:"SK네트웍스", person:"-", phone:""},
+  {cat:"기타", name:"엔에스게이트", person:"-", phone:""}
+];
 
 function sw(id,el){
   document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
-  document.getElementById('s-'+id).classList.add('on');
+  document.getElementById('x-'+id).classList.add('on');
   el.classList.add('on');
-  if(id==='vendor' && !vendorLoaded) loadVendors();
-  if(id==='report' && !reportLoaded) loadReport();
 }
 
-let vendorLoaded=false, reportLoaded=false;
+function render(){
+  const done=PROC.filter(p=>p.status==='완료').length;
+  const ing=PROC.filter(p=>p.status==='진행중').length;
+  const wait=PROC.filter(p=>p.status==='예정').length;
+  const pct=Math.round(done/PROC.length*100);
+  document.getElementById('cnt-done').textContent=done;
+  document.getElementById('cnt-ing').textContent=ing;
+  document.getElementById('cnt-wait').textContent=wait;
+  document.getElementById('pct').textContent=pct+'%';
+  document.getElementById('fill').style.width=pct+'%';
 
-async function callClaude(prompt){
-  const r = await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:MODEL,max_tokens:1000,mcp_servers:MCP,messages:[{role:'user',content:prompt}]})});
-  return await r.json();
-}
-
-function extractText(d){
-  if(!d||!d.content) return '';
-  return d.content.filter(b=>b.type==='text').map(b=>b.text).join('\n');
-}
-function parseJSON(t){
-  if(!t) return null;
-  try{const c=t.replace(/```json|```/g,'').trim();const m=c.match(/\[[\s\S]*\]/);return m?JSON.parse(m[0]):JSON.parse(c);}catch{return null;}
-}
-
-async function loadAll(){
-  loadDash();
-}
-
-async function loadDash(){
-  document.getElementById('dash-content').innerHTML='<div class="loading"><div class="spinner"></div> 공정 데이터 불러오는 중...</div>';
-  try{
-    const d = await callClaude(`Notion DB ${COL_PROGRESS}에서 모든 공정 항목 조회. 시스템명,상태,진척도(%),계획예정일,비고,시공업체(텍스트) 포함. JSON 배열만 반환. 다른 텍스트 없이. 형식:[{"시스템":"","상태":"","진척도":0,"계획예정일":"","비고":"","업체":""}]`);
-    const items = parseJSON(extractText(d)) || [];
-    renderDash(items);
-  }catch{document.getElementById('dash-content').innerHTML='<div style="color:var(--red);padding:20px;text-align:center">데이터 불러오기 실패. 새로고침 해보세요.</div>';}
-}
-
-function renderDash(items){
-  const done=items.filter(i=>i.상태==='완료').length;
-  const ing=items.filter(i=>i.상태==='진행중').length;
-  const wait=items.filter(i=>i.상태==='예정').length;
-  const pct=items.length?Math.round(done/items.length*100):0;
-  let h=`<div class="stat-grid">
-    <div class="scard"><div class="n g">${done}</div><div class="l">완료</div></div>
-    <div class="scard"><div class="n b">${ing}</div><div class="l">진행중</div></div>
-    <div class="scard"><div class="n a">${wait}</div><div class="l">예정</div></div>
-  </div>
-  <div class="overall">
-    <div class="overall-top"><span style="font-weight:700">전체 완료율</span><span style="color:var(--green);font-weight:800">${pct}%</span></div>
-    <div class="track"><div class="fill" style="width:${pct}%"></div></div>
-  </div>
-  <div class="sl">공정별 현황</div>`;
-  items.forEach(item=>{
-    const p=Number(item.진척도)||0;
-    const bc=item.상태==='완료'?'bd':item.상태==='진행중'?'bi':'bw';
-    const fc=item.상태==='완료'?'done':'';
-    h+=`<div class="prow">
-      <div class="prow-top">
-        <span class="prow-name">${item.시스템||'-'}</span>
-        <div class="prow-right">
-          <span class="pct-text">${p}%</span>
-          <span class="badge ${bc}">${item.상태||'예정'}</span>
-        </div>
-      </div>
-      <div class="mtrack"><div class="mfill ${fc}" style="width:${p}%"></div></div>
-      <div class="dates">
-        ${item.계획예정일?`<span class="dtag">예정일 ${item.계획예정일}</span>`:''}
-        ${item.비고?`<span class="dtag">${item.비고}</span>`:''}
-        ${item.업체?`<span class="tag-chip">${item.업체}</span>`:''}
-      </div>
-    </div>`;
-  });
-  document.getElementById('dash-content').innerHTML=h;
-}
-
-async function loadVendors(){
-  vendorLoaded=true;
-  document.getElementById('vendor-content').innerHTML='<div class="loading"><div class="spinner"></div> 업체 불러오는 중...</div>';
-  try{
-    const d = await callClaude(`Notion DB ${COL_VENDOR}에서 모든 업체 조회. 업체명,구분,성명,연락처,비고 포함. JSON 배열만 반환. 형식:[{"업체명":"","구분":"","성명":"","연락처":"","비고":""}]`);
-    const items = parseJSON(extractText(d)) || [];
-    renderVendors(items);
-  }catch{document.getElementById('vendor-content').innerHTML='<div style="color:var(--red);padding:20px;text-align:center">불러오기 실패</div>';}
-}
-
-function renderVendors(items){
-  const groups={};
-  items.forEach(v=>{const g=v.구분||'기타';if(!groups[g])groups[g]=[];groups[g].push(v);});
   let h='';
-  Object.entries(groups).forEach(([g,vs])=>{
-    h+=`<div class="sl">${g}</div>`;
-    vs.forEach(v=>{
-      h+=`<div class="vcard">
-        <div><div class="vname">${v.업체명||'-'}</div><div class="vperson">${v.성명||'-'} · ${v.연락처||'-'}</div></div>
-        <a class="vcall" href="tel:${v.연락처||''}">📞 전화</a>
-      </div>`;
+  PROC.forEach(p=>{
+    const bc=p.status==='완료'?'bgd':p.status==='진행중'?'bgi':'bgw';
+    const fc=p.status==='완료'?'d':'';
+    h+=`<div class="pr"><div class="prt"><span class="prn">${p.name}</span><div class="prr"><span class="pt">${p.pct}%</span><span class="bg ${bc}">${p.status}</span></div></div><div class="mt"><div class="mf ${fc}" style="width:${p.pct}%"></div></div><div class="dt">${p.vendor!=='-'?`<span class="dtg">${p.vendor}</span>`:''}${p.qty!=='-'?`<span class="dtg">${p.qty}</span>`:''}${p.note?`<span class="dtg">${p.note}</span>`:''}</div></div>`;
+  });
+  document.getElementById('proc-list').innerHTML=h;
+
+  let v='';
+  const groups={};
+  VENDORS.forEach(x=>{if(!groups[x.cat])groups[x.cat]=[];groups[x.cat].push(x);});
+  Object.entries(groups).forEach(([cat,vs])=>{
+    v+=`<div class="sl">${cat}</div>`;
+    vs.forEach(x=>{
+      v+=`<div class="vc"><div><div class="vn">${x.name}</div><div class="vp">${x.person} ${x.phone||''}</div></div>${x.phone?`<a class="vb" href="tel:${x.phone}">📞 전화</a>`:''}</div>`;
     });
   });
-  document.getElementById('vendor-content').innerHTML=h||'<div style="color:var(--muted);padding:20px;text-align:center">업체 데이터 없음</div>';
-}
+  document.getElementById('vendor-list').innerHTML=v;
 
-async function loadReport(){
-  reportLoaded=true;
-  document.getElementById('report-content').innerHTML='<div class="loading"><div class="spinner"></div> 보고서 생성 중...</div>';
-  try{
-    const d = await callClaude(`Notion DB ${COL_PROGRESS}에서 공정 현황 조회 후 오늘(${TODAY}) 기준 일일보고 텍스트 작성. 형식: 📋 통합경비 구축 일일보고\n일시: ${TODAY}\n\n✅ 완료 항목\n· ...\n\n🔧 진행중\n· ...(진척도%)\n\n📅 내일/이번주 예정\n· ...\n\n⚠ 특이사항\n· 없음\n\n텍스트만 반환.`);
-    const txt = extractText(d)||'보고서 생성 실패';
-    document.getElementById('report-content').innerHTML=`
-      <div class="sl">오늘 일일보고 — ${TODAY}</div>
-      <div class="report-box" id="report-text">${txt}</div>
-      <button class="copy-btn" onclick="copyReport()">📋 복사 → 카톡 붙여넣기</button>
-      <button class="copy-btn" onclick="reportLoaded=false;loadReport()">🔄 다시 생성</button>
-    `;
-  }catch{document.getElementById('report-content').innerHTML='<div style="color:var(--red);padding:20px;text-align:center">보고서 생성 실패</div>';}
+  const doneList=PROC.filter(p=>p.status==='완료').slice(0,3).map(p=>'· '+p.name).join('\n');
+  const ingList=PROC.filter(p=>p.status==='진행중').map(p=>`· ${p.name} (${p.pct}%)${p.note?' - '+p.note:''}`).join('\n');
+  const report=`📋 통합경비 구축 일일보고\n일시: 2026.06.24 (수)\n\n📊 전체 진행: ${pct}% (완료 ${done} / 진행중 ${ing} / 예정 ${wait})\n\n✅ 완료 (주요)\n${doneList}\n\n🔧 진행중\n${ingList}\n\n⚠ 특이사항\n· 없음`;
+  document.getElementById('report-text').textContent=report;
 }
 
 function copyReport(){
-  const t=document.getElementById('report-text');
-  navigator.clipboard.writeText(t.innerText).then(()=>{
-    const b=document.querySelector('.copy-btn');
-    b.textContent='✅ 복사됨!';setTimeout(()=>b.textContent='📋 복사 → 카톡 붙여넣기',2000);
+  const t=document.getElementById('report-text').textContent;
+  navigator.clipboard.writeText(t).then(()=>{
+    const b=document.querySelector('.cb');b.textContent='✅ 복사됨!';
+    setTimeout(()=>b.textContent='📋 복사 → 카톡 붙여넣기',2000);
   });
 }
-
-function setState(s,el){
-  state.status=s;
-  document.querySelectorAll('.sbtn').forEach(b=>b.className='sbtn');
-  if(s==='예정') el.className='sbtn on-wait';
-  if(s==='진행중') el.className='sbtn on-ing';
-  if(s==='완료') el.className='sbtn on-done';
-}
-
-document.getElementById('pct-slider').addEventListener('input',function(){
-  state.pct=this.value;
-  document.getElementById('pct-val2').textContent=this.value+'%';
-});
-
-async function saveInput(){
-  const proc=document.getElementById('inp-process').value;
-  if(!proc){alert('공정을 선택하세요');return;}
-  const stage=document.getElementById('inp-stage').value;
-  const newdate=document.getElementById('inp-newdate').value;
-  const reason=document.getElementById('inp-reason').value;
-  const note=document.getElementById('inp-note').value;
-  const btn=document.querySelector('#s-input .main-btn');
-  btn.textContent='저장 중...';btn.disabled=true;
-  try{
-    let prompt=`Notion DB ${COL_PROGRESS}에서 시스템명이 "${proc}"인 항목 찾아서 상태를 "${state.status}"로, 진척도(%)를 ${state.pct}로 업데이트해줘.`;
-    if(stage&&newdate) prompt+=` 그리고 일정변경이력 페이지(388ff82b-498a-81f5-83b0-d61482d75739)에 새 페이지 추가: 공정=${proc}, 변경단계=${stage}, 변경일=${newdate}, 변경사유=${reason||'없음'}.`;
-    if(note) prompt+=` 특이사항: ${note}`;
-    prompt+=' 완료 후 "저장완료"라고만 답해.';
-    await callClaude(prompt);
-    document.getElementById('save-result').textContent='✅ 저장 완료! 노션에 반영됐습니다.';
-    setTimeout(()=>document.getElementById('save-result').textContent='',3000);
-  }catch{document.getElementById('save-result').textContent='❌ 저장 실패. 다시 시도해주세요.';}
-  btn.textContent='💾 저장 (노션 자동 반영)';btn.disabled=false;
-}
-
-function handlePhotos(input){
-  const preview=document.getElementById('photo-preview');
-  preview.innerHTML='';
-  Array.from(input.files).forEach(f=>{
-    const url=URL.createObjectURL(f);
-    const img=document.createElement('img');
-    img.src=url;img.style.cssText='width:70px;height:70px;object-fit:cover;border-radius:6px;border:1px solid var(--border)';
-    preview.appendChild(img);
-  });
-}
-
-async function uploadPhotos(){
-  const proc=document.getElementById('photo-process').value;
-  const note=document.getElementById('photo-note').value;
-  if(!proc){alert('공정을 선택하세요');return;}
-  const btn=document.querySelector('#s-photo .main-btn');
-  btn.textContent='업로드 중...';btn.disabled=true;
-  try{
-    const prompt=`Notion DB ${COL_PHOTO}에 새 항목 추가. 제목="${proc} 현장사진 ${TODAY}", 공정="${proc}", 촬영일=${TODAY}, 특이사항="${note||'없음'}", 상태="진행중". 완료 후 "업로드완료"라고만 답해.`;
-    await callClaude(prompt);
-    document.getElementById('photo-result').textContent='✅ 노션에 저장됐습니다!';
-    setTimeout(()=>document.getElementById('photo-result').textContent='',3000);
-  }catch{document.getElementById('photo-result').textContent='❌ 업로드 실패';}
-  btn.textContent='📤 노션에 저장';btn.disabled=false;
-}
-
-loadAll();
+render();
 </script>
 </body>
 </html>
