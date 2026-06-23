@@ -403,7 +403,14 @@ function sw(id,el){
   el.classList.add('on');
   location.hash=id;
 }
-// 초기 로드 시 해시 탭 복원
+function cpReport(){alert('다음 작업에서 연결됩니다');}
+
+renderSummary();
+renderGantt();
+renderHistory();
+renderVend();
+
+// render 완료 후 해시 탭 복원
 (function(){
   const hash=(location.hash||'').replace('#','');
   const ids=['d','p','r','v','reg'];
@@ -416,12 +423,6 @@ function sw(id,el){
     tabs[idx].classList.add('on');
   }
 })();
-function cpReport(){alert('다음 작업에서 연결됩니다');}
-
-renderSummary();
-renderGantt();
-renderHistory();
-renderVend();
 </script>
 </body>
 </html>
