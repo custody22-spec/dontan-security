@@ -316,7 +316,7 @@ function saveApiKey(){
 }
 function showApiModal(){document.getElementById('api-modal').style.display='flex';}
 function hideApiModal(){document.getElementById('api-modal').style.display='none';}
-function checkApiKey(){if(!getApiKey()) showApiModal(); else hideApiModal();}
+function checkApiKey(){hideApiModal();}
 
 const today=new Date();
 const todayStr=today.getFullYear()+'.'+(String(today.getMonth()+1).padStart(2,'0'))+'.'+String(today.getDate()).padStart(2,'0');
@@ -501,13 +501,31 @@ function copyText(txt){
 }
 
 /* ── 대시보드 ── */
-async function loadDash(){
-  document.getElementById('dash-content').innerHTML='<div class="loading"><div class="spinner"></div> 공정 데이터 불러오는 중...</div>';
-  try{
-    const d=await callClaude(`Notion DB ${COL_PROGRESS}에서 모든 항목 조회. 시스템명,상태,진척도(%),계획예정일,비고,시공업체 포함. JSON 배열만. 형식:[{"시스템":"","상태":"","진척도":0,"계획예정일":"","비고":"","업체":""}]`);
-    const items=parseJSON(extractText(d))||[];
-    renderDash(items);
-  }catch{document.getElementById('dash-content').innerHTML='<div style="color:var(--red);padding:20px;text-align:center">데이터 불러오기 실패. 새로고침 해보세요.</div>';}
+function loadDash(){
+  const items=[
+    {시스템:"입주민APP",상태:"진행중",진척도:60,업체:"트러스테이",비고:"데이터 이관 진행"},
+    {시스템:"원패스시스템",상태:"완료",진척도:100,업체:"다산카이스",비고:"21EA 증가"},
+    {시스템:"커뮤니티 KIOSK",상태:"완료",진척도:100,업체:"트러스테이/TPM",비고:""},
+    {시스템:"커뮤니티출입통제",상태:"완료",진척도:100,업체:"SK쉴더스",비고:""},
+    {시스템:"스피드게이트",상태:"완료",진척도:100,업체:"SK쉴더스",비고:""},
+    {시스템:"주차관제시스템",상태:"완료",진척도:100,업체:"아마노코리아",비고:""},
+    {시스템:"경관조명",상태:"진행중",진척도:80,업체:"남효A&A",비고:"추가요청분 진행"},
+    {시스템:"CCTV",상태:"진행중",진척도:70,업체:"SK쉴더스",비고:"지상외곽 완료, 셋팅 진행"},
+    {시스템:"방재실·경비초소 대형모니터",상태:"완료",진척도:100,업체:"TPM",비고:""},
+    {시스템:"키즈룸",상태:"진행중",진척도:90,업체:"알에프지",비고:"안전성검사 대기"},
+    {시스템:"경비초소 대형간판·로고",상태:"완료",진척도:100,업체:"-",비고:""},
+    {시스템:"경비초소 비상벨",상태:"완료",진척도:100,업체:"-",비고:""},
+    {시스템:"근태관리시스템",상태:"완료",진척도:100,업체:"-",비고:""},
+    {시스템:"순찰관리시스템",상태:"완료",진척도:100,업체:"-",비고:""},
+    {시스템:"경비원 바디캠",상태:"완료",진척도:100,업체:"-",비고:""},
+    {시스템:"입주민구호물품",상태:"완료",진척도:100,업체:"-",비고:""},
+    {시스템:"순찰용 전기자전거",상태:"완료",진척도:100,업체:"-",비고:""},
+    {시스템:"수하물 전기오토바이",상태:"완료",진척도:100,업체:"-",비고:""},
+    {시스템:"★ 주차관제(방문예약)",상태:"예정",진척도:0,업체:"노크타운",비고:"노크타운 연동"},
+    {시스템:"★ 원패스(공동현관)",상태:"예정",진척도:0,업체:"-",비고:""},
+    {시스템:"★ 홈페이지(노크타운)",상태:"예정",진척도:0,업체:"-",비고:""},
+  ];
+  renderDash(items);
 }
 
 function renderDash(items){
@@ -544,25 +562,30 @@ function renderDash(items){
 }
 
 /* ── 업체 ── */
-async function loadVendors(){
+function loadVendors(){
   vendorLoaded=true;
-  document.getElementById('vendor-content').innerHTML='<div class="loading"><div class="spinner"></div> 업체 불러오는 중...</div>';
-  try{
-    const d=await callClaude(`Notion DB ${COL_VENDOR}에서 모든 업체 조회. 업체명,구분,성명,연락처 포함. JSON 배열만. 형식:[{"업체명":"","구분":"","성명":"","연락처":""}]`);
-    const items=parseJSON(extractText(d))||[];
-    let h='';
-    const groups={};
-    items.forEach(v=>{const g=v.구분||'기타';if(!groups[g])groups[g]=[];groups[g].push(v);});
-    Object.entries(groups).forEach(([g,vs])=>{
-      h+=`<div class="sl">${g}</div>`;
-      vs.forEach(v=>{
-        h+=`<div class="vcard"><div><div class="vname">${v.업체명||'-'}</div><div class="vperson">${v.성명||'-'} · ${v.연락처||'-'}</div></div>
-          ${v.연락처?`<a class="vcall" href="tel:${v.연락처}">📞 전화</a>`:''}
-        </div>`;
-      });
+  const vendors=[
+    {구분:"CCTV·출입통제·스피드게이트",업체명:"SK쉴더스",성명:"-",연락처:"1800-6400"},
+    {구분:"주차관제",업체명:"아마노코리아",성명:"-",연락처:""},
+    {구분:"경관조명",업체명:"남효A&A",성명:"-",연락처:""},
+    {구분:"원패스시스템",업체명:"다산카이스",성명:"-",연락처:""},
+    {구분:"입주민APP·KIOSK",업체명:"트러스테이",성명:"-",연락처:""},
+    {구분:"대형모니터·KIOSK",업체명:"TPM",성명:"-",연락처:""},
+    {구분:"키즈룸",업체명:"알에프지",성명:"-",연락처:""},
+    {구분:"방문예약·홈페이지",업체명:"노크타운",성명:"-",연락처:""},
+  ];
+  const groups={};
+  vendors.forEach(v=>{const g=v.구분;if(!groups[g])groups[g]=[];groups[g].push(v);});
+  let h='';
+  Object.entries(groups).forEach(([g,vs])=>{
+    h+=`<div class="sl">${g}</div>`;
+    vs.forEach(v=>{
+      h+=`<div class="vcard"><div><div class="vname">${v.업체명}</div><div class="vperson">${v.성명} · ${v.연락처||'연락처 미확인'}</div></div>
+        ${v.연락처?`<a class="vcall" href="tel:${v.연락처}">📞 전화</a>`:''}
+      </div>`;
     });
-    document.getElementById('vendor-content').innerHTML=h||'<div style="color:var(--muted);padding:20px;text-align:center">업체 데이터 없음</div>';
-  }catch{document.getElementById('vendor-content').innerHTML='<div style="color:var(--red);padding:20px;text-align:center">불러오기 실패</div>';}
+  });
+  document.getElementById('vendor-content').innerHTML=h;
 }
 
 /* ── 입력 저장 ── */
@@ -607,8 +630,8 @@ function toast(msg){
 }
 
 function loadAll(){loadDash();}
-checkApiKey();
-if(getApiKey()) loadAll();
+hideApiModal();
+loadAll();
 </script>
 </body>
 </html>
