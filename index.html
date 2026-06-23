@@ -288,36 +288,6 @@ const today=new Date();
 const todayStr=today.getFullYear()+'.'+(String(today.getMonth()+1).padStart(2,'0'))+'.'+String(today.getDate()).padStart(2,'0');
 const days=['일','월','화','수','목','금','토'];
 
-// API 키 관리
-let API_KEY=localStorage.getItem('claude_api_key')||'';
-function getApiKey(){return API_KEY;}
-function saveApiKey(k){API_KEY=k;localStorage.setItem('claude_api_key',k);}
-
-// API 키 모달
-function showKeyModal(){
-  const existing=document.getElementById('key-modal');
-  if(existing)existing.remove();
-  const m=document.createElement('div');
-  m.id='key-modal';
-  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
-  m.innerHTML=`<div style="background:#fff;border-radius:12px;padding:20px;width:100%;max-width:360px">
-    <div style="font-size:15px;font-weight:700;margin-bottom:6px">🔑 Anthropic API 키 입력</div>
-    <div style="font-size:12px;color:#6b7280;margin-bottom:12px">sk-ant-api03-... 로 시작하는 키</div>
-    <input id="key-input" type="password" placeholder="sk-ant-api03-..." style="width:100%;border:1px solid #e2e6f0;border-radius:8px;padding:10px;font-size:13px;margin-bottom:10px">
-    <button onclick="confirmKey()" style="width:100%;background:#4f8ef7;color:#fff;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;cursor:pointer">저장</button>
-  </div>`;
-  document.body.appendChild(m);
-  document.getElementById('key-input').focus();
-}
-function confirmKey(){
-  const k=document.getElementById('key-input').value.trim();
-  if(!k.startsWith('sk-')){alert('올바른 API 키를 입력해주세요');return;}
-  saveApiKey(k);
-  document.getElementById('key-modal').remove();
-  toast('✅ API 키 저장됨');
-  loadAll();
-}
-
 // 날짜 초기값
 document.getElementById('photoDate').value=todayStr;
 document.getElementById('rep-date').textContent=todayStr+' ('+days[today.getDay()]+')';
@@ -337,10 +307,8 @@ function sw(id,el){
 }
 
 async function callClaude(prompt,imgs){
-  const key=getApiKey();
-  if(!key){showKeyModal();throw new Error('API 키 없음');}
   const content=imgs?[...imgs.map(b=>({type:'image',source:{type:'base64',media_type:'image/jpeg',data:b}})),{type:'text',text:prompt}]:[{type:'text',text:prompt}];
-  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({model:MODEL,max_tokens:1000,mcp_servers:MCP,messages:[{role:'user',content}]})});
   return await r.json();
 }
@@ -598,10 +566,7 @@ function toast(msg){
   setTimeout(()=>t.classList.remove('show'),2500);
 }
 
-function loadAll(){
-  if(!getApiKey()){showKeyModal();return;}
-  loadDash();
-}
+function loadAll(){loadDash();}
 loadAll();
 </script>
 </body>
