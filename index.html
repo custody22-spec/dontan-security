@@ -12,7 +12,7 @@ header{background:var(--navy);color:#fff;padding:14px 18px;position:sticky;top:0
 header h1{font-size:20px;font-weight:700}
 header .sub{font-size:11px;opacity:.85;margin-top:2px}
 .tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto}
-.tab{padding:11px 13px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0}
+.tab{padding:10px 10px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0}
 .tab.on{color:var(--accent);border-bottom-color:var(--accent)}
 .main{padding:16px;max-width:960px;margin:0 auto}
 .sc{display:none}.sc.on{display:block}
@@ -118,9 +118,9 @@ header .sub{font-size:11px;opacity:.85;margin-top:2px}
   <div class="sub">동탄역시범 한화꿈에그린 프레스티지</div>
 </header>
 <div class="tabs">
-  <div class="tab on" onclick="sw('d',this)">📊 일정</div>
+  <div class="tab on" onclick="sw('d',this)">📊 대시보드</div>
   <div class="tab" onclick="sw('p',this)">📷 사진</div>
-  <div class="tab" onclick="sw('r',this)">📋 보고</div>
+  <div class="tab" onclick="sw('r',this)">📋 일일보고</div>
   <div class="tab" onclick="sw('v',this)">📞 업체</div>
   <div class="tab" onclick="sw('reg',this)">✏️ 등록</div>
 </div>
@@ -401,7 +401,21 @@ function sw(id,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   document.getElementById('x-'+id).classList.add('on');
   el.classList.add('on');
+  location.hash=id;
 }
+// 초기 로드 시 해시 탭 복원
+(function(){
+  const hash=(location.hash||'').replace('#','');
+  const ids=['d','p','r','v','reg'];
+  if(hash&&ids.includes(hash)){
+    const tabs=document.querySelectorAll('.tab');
+    const idx=ids.indexOf(hash);
+    document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
+    tabs.forEach(t=>t.classList.remove('on'));
+    document.getElementById('x-'+hash).classList.add('on');
+    tabs[idx].classList.add('on');
+  }
+})();
 function cpReport(){alert('다음 작업에서 연결됩니다');}
 
 renderSummary();
